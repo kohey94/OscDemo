@@ -7,10 +7,10 @@ namespace OscDemo.Server
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("OSC Server,");
+            Console.WriteLine("OSC Server.");
 
             // 12345ポートでOscレシーバーを作成
-            using OscReceiver oscServer = new OscReceiver(12345);
+            using var oscServer = new OscReceiver(12345);
             
             // 接続処理
             oscServer.Connect();
@@ -18,7 +18,7 @@ namespace OscDemo.Server
             // 無限ループにして受信待ち
             while(true)
             {
-                OscPacket oscPacket = oscServer.Receive();
+                var oscPacket = oscServer.Receive();
                 Console.WriteLine(oscPacket.ToString());
             }
         }

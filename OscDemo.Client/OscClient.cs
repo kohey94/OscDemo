@@ -11,10 +11,10 @@ namespace OscDemo.Client
             Console.WriteLine("OSC Client.");
 
             // 送信先はローカルホスト
-            IPAddress address = IPAddress.Parse("127.0.0.1");
+            var address = IPAddress.Parse("127.0.0.1");
 
             // 送信先のポートを指定
-            using OscSender oscSender = new OscSender(address, 12345);
+            using var oscSender = new OscSender(address, 12345);
             
             // 接続
             oscSender.Connect();
@@ -24,7 +24,7 @@ namespace OscDemo.Client
             {
                 var msg = Console.ReadLine();
 
-                oscSender.Send(new OscMessage("/test", msg.ToString(), 123));
+                oscSender.Send(new OscMessage("/test", msg.ToString()));
             }
         }
     }
