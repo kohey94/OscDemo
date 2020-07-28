@@ -10,7 +10,7 @@ namespace OscDemo.Server
             Console.WriteLine("OSC Server.");
 
             // 12345ポートでOscレシーバーを作成
-            using var oscServer = new OscReceiver(12345);
+            using var oscServer = new OscReceiver(2345);
             
             // 接続処理
             oscServer.Connect();

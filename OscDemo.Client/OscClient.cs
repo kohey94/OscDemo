@@ -12,9 +12,9 @@ namespace OscDemo.Client
 
             // 送信先はローカルホスト
             var address = IPAddress.Parse("127.0.0.1");
-
+            
             // 送信先のポートを指定
-            using var oscSender = new OscSender(address, 12345);
+            using var oscSender = new OscSender(address, 2345);
             
             // 接続
             oscSender.Connect();
