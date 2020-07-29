@@ -16,14 +16,9 @@ namespace OscDemo.Wpf
     {
         private MainWindowViewModel viewModel;
 
-        // タイマのインスタンス
-        private DispatcherTimer _timer;
+        private OscReceiver oscReceiver;
 
-        //OSCのレシーバー
-        private OscReceiver _OscReceiver;
-
-        //OSC受信待ちをするタスク
-        private Task _task = null;
+        private Thread thread;
 
         public MainWindow()
         {
@@ -48,7 +43,7 @@ namespace OscDemo.Wpf
 
         private void SendFunction (object sender, RoutedEventArgs e)
         {
-
+            Console.WriteLine("送信処理");
             // 送信先はローカルホスト
             var address = IPAddress.Parse("127.0.0.1");
             
@@ -66,52 +61,60 @@ namespace OscDemo.Wpf
 
         private void ConnectFunction (object sender, RoutedEventArgs e)
         {
-            var thread = new Thread(new ThreadStart(Connect));
+            Console.WriteLine("接続処理");
+            
+            oscReceiver = new OscReceiver(2345);
+
+            // Create a thread to do the listening
+            thread = new Thread(new ThreadStart(ListenLoop));
+
+            // Connect the receiver
+            oscReceiver.Connect();
+
+            // Start the listen thread
             thread.Start();
         }
 
-        private void Connect()
+        private void ListenLoop()
         {
-            using var oscReceiver = new OscReceiver(2345);
-
-            //// 接続処理
-            oscReceiver.Connect();
-
-            // 無限ループにして受信待ち
-            while (true)
+            Console.WriteLine("ListenLoop");
+            try
             {
-                var oscPacket = oscReceiver.Receive();
-                viewModel.OscText = oscPacket.ToString();
+                while (oscReceiver.State != OscSocketState.Closed)
+                {
+                    Console.WriteLine("wait...");
+                    // if we are in a state to recieve
+                    if (oscReceiver.State == OscSocketState.Connected)
+                    {
+                        // get the next message 
+                        // this will block until one arrives or the socket is closed
+                        OscPacket packet = oscReceiver.Receive();
+
+                        // Write the packet to the console 
+                        Console.WriteLine(packet.ToString());
+
+                        // DO SOMETHING HERE!
+                        viewModel.OscText = packet.ToString();
+                    }
+                    Thread.Sleep(10000);
+                }
+            }
+            catch (Exception ex)
+            {
+                // if the socket was connected when this happens
+                // then tell the user
+                if (oscReceiver.State == OscSocketState.Connected)
+                {
+                    Console.WriteLine("Exception in listen loop");
+                    Console.WriteLine(ex.Message);
+                }
             }
         }
-
-        /// <summary>
-        /// OSC受信をListenする処理
-        /// Taskで実行されており、繰り返し受信を確認し
-        /// 接続が終了したら処理を終わらせる
-        /// </summary>
-        private void OscListenProcess()
-        {
-            //using var oscServer = new OscReceiver(2345);
-
-            //// 接続処理
-            //oscServer.Connect();
-
-            // 無限ループにして受信待ち
-            while (true)
-            {
-                var oscPacket = _OscReceiver.Receive();
-                viewModel.OscText = oscPacket.ToString();
-                Console.WriteLine(oscPacket.ToString());
-            }
-        }
-
-
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            _OscReceiver.Close();
-            _timer.Stop();
+            oscReceiver.Close();
+            thread.Join();
         }
     }
 }

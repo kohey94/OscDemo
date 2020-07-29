@@ -8,7 +8,7 @@
         Title="MainWindow" Height="450" Width="800">
     <Grid>
         <Label Content="{Binding OscText}" Background="{Binding BgColor}"/>
-        <Button Width="100" Height="20" x:Name="SendButton" Click="SendFunction" Margin="350,289,350,125">送信</Button>
-        <Button Width="100" Height="20" x:Name="ConnectButton" Click="ConnectFunction" Margin="350,389,350,25">接続</Button>
+        <Button Width="100" Height="20" x:Name="SendButton" Click="SendFunction" Margin="218,197,482,217">送信</Button>
+        <Button Width="100" Height="20" x:Name="ConnectButton" Click="ConnectFunction" Margin="350,197,350,217">接続</Button>
     </Grid>
 </Window>
