@@ -49,4 +49,5 @@ namespace OscDemo.Wpf
         
        
     }
+    // TODO ネットワークについての復習
 }
