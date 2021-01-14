@@ -1,3 +1,3 @@
 # OscDemo
-OSCを触ってみる
+OSCを触ってみる  
 Rug.OscでOSCが何なのかを理解するデモ
